@@ -17,37 +17,11 @@ indexdf.set_index('date', inplace=True)
 indexdf.index = pd.DatetimeIndex(indexdf.index)
 # Date in the returned dataframe is a string. we convert it into a datatimeindex index
 
-#############################################################
-# 过去N天高开、低开次数（三、七、十五天、三十天，六十天，九十天）
-
-def LowopeninlastNdays(frame, N):
-    df = frame.tail(N)
-    to_opens = df['open'].shift(1)
-    ye_closes = df['close']
-    offset = to_opens - ye_closes
-    return len(offset[offset < 0])  # 返回所有offset序列中小于0的数量
-
 
 # cal the number of lower open in last N days in the index
 # today's open - yesterday's close
 
-def HigheopeninlastNdays(frame, N):
-    df = frame.tail(N)
-    to_opens = df['open'].shift(1)
-    ye_closes = df['close']
-    offset = to_opens - ye_closes
-    return len(offset[offset > 0])  # 返回所有offset序列中小于0的数量
 
-# cal the number of higher open in last N days in the index
-# today's open - yesterday's close
-# 【注意】：可能有个bug，shift（1）后第一个数是NAN，减去一个实数还是NAN
-#############################################################
-# 过去N天上涨、下跌次数（三、七、十五天、三十天，六十天，九十天）
-
-def UpinlastNdays(frame, N):
-    df_1 = frame.tail(N)
-    df = df_1['close'] - df_1['open']
-    return len(df[df > 0])
 
 
 def DowninlastNdays(frame, N):
@@ -119,23 +93,6 @@ def MaxlenofupdownsinlastNdays(frame):
     return StartEnd
 
 
-
-##############################################################
-[class ready]
-#过去N天点位同比变化（上涨，下跌比率）（三、七、十五天、三十天，六十天，九十天）
-#return percent change from the start to the end
-def PricechangesinlastNdays(frame):
-    return (frame.iloc[-1].close - frame.iloc[0].close)/frame.iloc[-1].close
-
-#################################################################
-#过去N天最高点位和最低点位的震动比例（三、七、十五天、三十天，六十天，九十天）
-#return the max to min percentage change, if go up return positive number, if go down return negtive number
-def PriceshakeinlastNdays(frame):
-    #conpare the time, if the max is larger than the min then return the positive number, if not negtive number
-    if indexdf[indexdf.close == indexdf['close'].max()].index > indexdf[indexdf.close == indexdf['close'].min()].index:
-        return (frame['close'].max() - frame['close'].min())/frame['close'].min()
-    else:
-        return -(frame['close'].max() - frame['close'].min())/frame['close'].max()
 
 
 ##################################################################
