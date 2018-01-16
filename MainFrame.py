@@ -1,3 +1,9 @@
+import tushare as ts
+import pandas as pd
+import numpy as np
+import datetime
+import time
+
 class DataPreparation(object):
     
     #Instrument = '600848'   #define the target instrument
@@ -53,3 +59,8 @@ class DataPreparation(object):
             return int(1)
         else:
             return int(0)
+
+
+dp = DataPreparation('600848',365,30,90,0.2)
+tmp=dp.init_index('000001')
+print(tmp)
