@@ -23,7 +23,7 @@ class DataPreparation(object):
         return IndexData
     
     # return percent change from the start to the end
-    def PricechangesinlastNdays(self,Inframe,N):
+    def PriceChangesinlastNdays(self,Inframe,N):
         Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
         idx = Series.index
         for value in idx:
@@ -32,7 +32,7 @@ class DataPreparation(object):
             Series[value] = (Inframe.iloc[_StartTime].close - Inframe.iloc[_Pointer].close)/Inframe.iloc[_StartTime].close
         return Series
 
-    def PriceshakeinlastNdays(self, Inframe, N):
+    def PriceShakeinlastNdays(self, Inframe, N):
         # return the max to min percentage change, if go up return positive number, if go down return negtive number
         # conpare the time, if the max is larger than the min then return the positive number, if not negtive number
         Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
@@ -54,7 +54,7 @@ class DataPreparation(object):
         else:
             return int(0)
 
-    def LowopeninlastNdays(self, Inframe, N):
+    def LowOpeninlastNdays(self, Inframe, N):
         # Higher or Lower open is last N days
         Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
         idx = Series.index
@@ -79,6 +79,18 @@ class DataPreparation(object):
             Series[value] = len(df[df > 0])
         return Series
 
+    def InDayShakeinlastNdays(self, Inframe, N):
+        # cal the percentage shake std within days
+        Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
+        idx = Series.index
+        for value in idx:
+            _Pointer = Inframe.index.get_loc(value.strftime('%Y-%m-%d'))
+            _StartTime = _Pointer - N
+            df_1 = Inframe.iloc[_StartTime:_Pointer]
+            df = (df_1['close'] - df_1['open'])*100/df_1['open']
+            Series[value] = df.std()
+        return Series
+
 dp = DataPreparation('600848',365,30,90,0.2)
 tmp=dp.init_index('000001')
-tmp1 = dp.UpinlastNdays(tmp,30)
+tmp1 = dp.InDayShakeinlastNdays(tmp,30)
