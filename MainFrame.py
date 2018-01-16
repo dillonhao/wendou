@@ -22,7 +22,6 @@ class DataPreparation(object):
         IndexData.index = pd.DatetimeIndex(IndexData.index)
         return IndexData
     
-    # 过去N天点位同比变化（上涨，下跌比率）（三、七、十五天、三十天，六十天，九十天）
     # return percent change from the start to the end
     def PricechangesinlastNdays(self,Inframe,N):
         Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
@@ -34,16 +33,19 @@ class DataPreparation(object):
         return Series
 
     def PriceshakeinlastNdays(self, Inframe, N):
+        # return the max to min percentage change, if go up return positive number, if go down return negtive number
         # conpare the time, if the max is larger than the min then return the positive number, if not negtive number
         Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
         idx = Series.index
-        if indexdf[indexdf.close == indexdf['close'].max()].index > indexdf[
-            indexdf.close == indexdf['close'].min()].index:
-            return (frame['close'].max() - frame['close'].min()) / frame['close'].min()
-        else:
-            return -(frame['close'].max() - frame['close'].min()) / frame['close'].max()
-    
-    # ef data_assemble():                                #assemble all the data
+        for value in idx:
+            _Pointer = Inframe.index.get_loc(value.strftime('%Y-%m-%d'))
+            _StartTime = _Pointer - N
+            if Inframe[Inframe.close == Inframe['close'].max()].index > Inframe[Inframe.close == Inframe['close'].min()].index:
+                Series[value] =  (Inframe.iloc[_StartTime:_Pointer].close.max() - Inframe.iloc[_StartTime:_Pointer].close.min()) / Inframe.iloc[_StartTime:_Pointer].close.min()
+            else:
+                Series[value] = (Inframe.iloc[_StartTime:_Pointer].close.max() - Inframe.iloc[_StartTime:_Pointer].close.min()) / Inframe.iloc[_StartTime:_Pointer].close.max()
+        return Series
+    # def data_assemble():                                #assemble all the data
     
     
     def GoodOrBad(self, frame,up):
@@ -52,6 +54,31 @@ class DataPreparation(object):
         else:
             return int(0)
 
+    def LowopeninlastNdays(self, Inframe, N):
+        # Higher or Lower open is last N days
+        Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
+        idx = Series.index
+        for value in idx:
+            _Pointer = Inframe.index.get_loc(value.strftime('%Y-%m-%d'))
+            _StartTime = _Pointer - N
+            to_opens = Inframe.iloc[_StartTime:_Pointer].open.shift(1)
+            ye_closes = Inframe.iloc[_StartTime:_Pointer].open
+            offset = to_opens - ye_closes
+            Series[value] = len(offset[offset < 0])
+        return Series
+
+    def UpinlastNdays(self, Inframe, N):
+        # cal the up days in the last N days
+        Series = pd.Series(index = Inframe.iloc[N:-self.__PerformWindow].index)
+        idx = Series.index
+        for value in idx:
+            _Pointer = Inframe.index.get_loc(value.strftime('%Y-%m-%d'))
+            _StartTime = _Pointer - N
+            df_1 = Inframe.iloc[_StartTime:_Pointer]
+            df = df_1['close'] - df_1['open']
+            Series[value] = len(df[df > 0])
+        return Series
+
 dp = DataPreparation('600848',365,30,90,0.2)
 tmp=dp.init_index('000001')
-print(tmp)
+tmp1 = dp.UpinlastNdays(tmp,30)
