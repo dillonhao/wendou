@@ -4,9 +4,9 @@ import numpy as np
 import datetime
 
 
-class index_mainframe(object):
-    def __init__(self, instrument, timewindow, performwindow, obervationwindow, uppercent):
-        self.__instrument = instrument  # Name of the stock
+class IndexMainframe(object):
+    def __init__(self, index, timewindow, performwindow, obervationwindow, uppercent):
+        #self.__instrument = instrument  # Name of the stock
         self.__timewindow = timewindow  # int windows for data analysis
         self.__performwindow = int(performwindow)  # int windows for data analysis
         self.__obervationwindow = int(obervationwindow)  # int windows for observation
@@ -14,14 +14,10 @@ class index_mainframe(object):
         self.__starttime = (datetime.datetime.now() - datetime.timedelta(days=self.__timewindow)).strftime('%Y-%m-%d')
         # __starttime is max time of entry point
         self.__endtime = datetime.datetime.now().strftime('%Y-%m-%d')
-
-    # def init_instrument(): #init the instrument data
-
-    def init_index(self, index):  # init the index data
         IndexData = ts.get_k_data(index, index=True, start=self.__starttime, end=self.__endtime)
         IndexData.set_index('date', inplace=True)
         IndexData.index = pd.DatetimeIndex(IndexData.index)
-        return IndexData
+        self.__indexdata = IndexData
 
     # return percent change from the start to the end
     def PriceChangesinlastNdays(self, inframe, N):
@@ -52,8 +48,6 @@ class index_mainframe(object):
                                                                                  _starttime:_pointer].close.min()) / inframe.iloc[
                                                                                                                      _starttime:_pointer].close.max()
         return Series
-
-    # def data_assemble():                                #assemble all the data
 
     def GoodOrBad(self, frame, up):
         if (frame.iloc[0].close - frame.close.max()) / frame.iloc[0].close > up and frame.close.min() > frame.iloc[
@@ -150,7 +144,7 @@ class index_mainframe(object):
         return df
 
     def MaxLenofUpDownsinlastNdays(self, inframe, _start, _End):
-        # cal the max continuous up and down in the timeseries and return the up percentage and down percentage
+        # Not design to work alone. cal the max continuous up and down in the timeseries and return the up percentage and down percentage
         '''
         return  example
                 Start 	End 	Duration 	PriceChange
@@ -207,7 +201,24 @@ class index_mainframe(object):
         StartEnd['PriceChange'] = PriceChange
         return StartEnd
 
+    def data_assemble(self, datelist):
+        # assemble all the data
+        print('im in here.hahah')
+        indexDataFrame = pd.DataFrame(index = self.__indexdata.index)
+        for value in enumerate(datelist):
+            indexDataFrame['PriceChangesinlastNdays' + str(value)] = self.PriceChangesinlastNdays(self.__indexdata, value)
+            indexDataFrame['PriceShakeinlastNdays' + str(value)] = self.PriceShakeinlastNdays(self.__indexdata, value)
+            indexDataFrame['LowOpeninlastNdays' + str(value)] = self.LowOpeninlastNdays(self.__indexdata, value)
+            indexDataFrame['UpinlastNdays' + str(value)] = self.UpinlastNdays(self.__indexdata, value)
+            indexDataFrame['InDayShakeinlastNdays' + str(value)] = self.InDayShakeinlastNdays(self.__indexdata, value)
+            indexDataFrame['VolumnsuminlastNdays' + str(value)] = self.VolumnsuminlastNdays(self.__indexdata, value)
+            indexDataFrame['IndexSTDinlastNdays' + str(value)] = self.IndexSTDinlastNdays(self.__indexdata, value)
+            indexDataFrame['IndexPercentageSTDinlastNdays' + str(value)] = self.IndexPercentageSTDinlastNdays(self.__indexdata, value)
+            indexDataFrame['MaxContinuousUpDownInLastNdays' + str(value)] = self.MaxContinuousUpDownInLastNdays(self.__indexdata, value)
+        return indexDataFrame
 
-dp = index_mainframe('600848', 365, 30, 90, 0.2)
-tmp = dp.init_index('000001')
-tmp1 = dp.MaxContinuousUpDownInLastNdays(tmp, 30)
+
+alist = [30,60]
+Myclass = IndexMainframe('000001', 365, 30, 90, 0.2)
+#tmp = dp.init_index('000001')
+test = Myclass.data_assemble(alist)
