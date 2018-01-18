@@ -134,11 +134,10 @@ class DataPreparation(object):
             _Pointer = Inframe.index.get_loc(value.strftime('%Y-%m-%d'))
             _StartTime = _Pointer - N
             UpDownPrice = self.MaxLenofUpDownsinlastNdays(Inframe, _StartTime, _Pointer)
-            print ('here is the value', value)
-            df[value].UpDur = UpDownPrice.loc[True,'Duration']
-            df[value].DownDur = UpDownPrice.loc[False,'Duration']
-            df[value].UpPrice = UpDownPrice.loc[True,'PriceChange']
-            df[value].DownPrice = UpDownPrice.loc[False,'PriceChange']
+            df.loc[value].UpDur = UpDownPrice.loc[True,'Duration']
+            df.loc[value].DownDur =UpDownPrice.loc[False,'Duration']
+            df.loc[value].UpPrice = UpDownPrice.loc[True,'PriceChange']
+            df.loc[value].DownPrice = UpDownPrice.loc[False,'PriceChange']
         return df
 
     def MaxLenofUpDownsinlastNdays(self,Inframe, _start, _End):
