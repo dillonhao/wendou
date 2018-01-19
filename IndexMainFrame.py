@@ -49,9 +49,15 @@ class IndexMainframe(object):
                                                                                                                      _starttime:_pointer].close.max()
         return Series
 
-    def GoodOrBad(self, frame, up):
-        if (frame.iloc[0].close - frame.close.max()) / frame.iloc[0].close > up and frame.close.min() > frame.iloc[
-            0].close:
+    def GoodOrBad(self, inframe, up):
+        #define good or bad
+        Series = pd.Series(index=inframe.iloc[N:-self.__performwindow].index,name='KGB')
+        idx = Series.index
+        for value in idx:
+            _pointer = inframe.index.get_loc(value.strftime('%Y-%m-%d'))
+            _endtime = _pointer + self.__performwindow
+            if (inframe.iloc[_pointer:_endtime].close.max() - inframe.iloc[_pointer].close) / frame.iloc[0].close > up and inframe.iloc[_pointer:_endtime].close.min() > inframe.iloc[_pointer].close:
+            Series[value] = int(1)
             return int(1)
         else:
             return int(0)
