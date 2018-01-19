@@ -33,7 +33,7 @@ def DowninlastNdays(frame, N):
 #############################################################
 # 过去N天最长连续上涨，下跌时间，和价格变化（三、七、十五天、三十天，六十天，九十天）
 # 注意：从这个版本的函数开始，输入变成了indexdf.tail(N)，注意这个变化。
-# cal the max up and down in the timeseries and return the up percentage and down percentage
+# cal the max continuous up and down in the timeseries and return the up percentage and down percentage
 '''
 return  example
         Start 	End 	Duration 	PriceChange
@@ -96,19 +96,11 @@ def MaxlenofupdownsinlastNdays(frame):
 
 
 ##################################################################
-#过去N天成交量累计（三、七、十五天、三十天，六十天，九十天）
-def VolumnsuminlastNdays(frame):
-    return frame.volume.sum()
+# 过去N天成交量累计（三、七、十五天、三十天，六十天，九十天）
 
 ###################################################################
 #过去N天指数绝对值的标准差
-def IndexSTDinlastNdays(frame):
-    return frame.close.std()
 
 
 #####################################################################
-#过去N天指数波动率的标准差
-def IndexpercentageSTDinlastNdays(frame):
-    ChangePercentage = (frame.close-frame.close.shift(1))/frame.close
-    ChangePercentage.dropna(inplace=True)
-    return ChangePercentage.std()
+
