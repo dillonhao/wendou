@@ -203,7 +203,6 @@ class IndexMainframe(object):
 
     def data_assemble(self, datelist):
         # assemble all the data
-        print('im in here.hahah')
         indexDataFrame = pd.DataFrame(index=self.__indexdata.index)
         for value in datelist:
             s1 = pd.Series(self.PriceChangesinlastNdays(self.__indexdata, value),
@@ -218,8 +217,8 @@ class IndexMainframe(object):
             s7 = pd.Series(self.IndexSTDinlastNdays(self.__indexdata, value), name='IndexSTDinlastNdays' + str(value))
             s8 = pd.Series(self.IndexPercentageSTDinlastNdays(self.__indexdata, value),
                            name='IndexPercentageSTDinlastNdays' + str(value))
-            # s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value),name = 'MaxContinuousUpDownInLastNdays' + str(value))
-            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8], axis=1)
+            s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value))
+            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             indexDataFrame = pd.concat([indexDataFrame, df], axis=1)
         return indexDataFrame
 
