@@ -204,21 +204,27 @@ class IndexMainframe(object):
     def data_assemble(self, datelist):
         # assemble all the data
         print('im in here.hahah')
-        indexDataFrame = pd.DataFrame(index = self.__indexdata.index)
-        for value in enumerate(datelist):
-            indexDataFrame['PriceChangesinlastNdays' + str(value)] = self.PriceChangesinlastNdays(self.__indexdata, value)
-            indexDataFrame['PriceShakeinlastNdays' + str(value)] = self.PriceShakeinlastNdays(self.__indexdata, value)
-            indexDataFrame['LowOpeninlastNdays' + str(value)] = self.LowOpeninlastNdays(self.__indexdata, value)
-            indexDataFrame['UpinlastNdays' + str(value)] = self.UpinlastNdays(self.__indexdata, value)
-            indexDataFrame['InDayShakeinlastNdays' + str(value)] = self.InDayShakeinlastNdays(self.__indexdata, value)
-            indexDataFrame['VolumnsuminlastNdays' + str(value)] = self.VolumnsuminlastNdays(self.__indexdata, value)
-            indexDataFrame['IndexSTDinlastNdays' + str(value)] = self.IndexSTDinlastNdays(self.__indexdata, value)
-            indexDataFrame['IndexPercentageSTDinlastNdays' + str(value)] = self.IndexPercentageSTDinlastNdays(self.__indexdata, value)
-            indexDataFrame['MaxContinuousUpDownInLastNdays' + str(value)] = self.MaxContinuousUpDownInLastNdays(self.__indexdata, value)
+        indexDataFrame = pd.DataFrame(index=self.__indexdata.index)
+        for value in datelist:
+            s1 = pd.Series(self.PriceChangesinlastNdays(self.__indexdata, value),
+                           name='PriceChangesinlastNdays' + str(value))
+            s2 = pd.Series(self.PriceShakeinlastNdays(self.__indexdata, value),
+                           name='PriceShakeinlastNdays' + str(value))
+            s3 = pd.Series(self.LowOpeninlastNdays(self.__indexdata, value), name='LowOpeninlastNdays' + str(value))
+            s4 = pd.Series(self.UpinlastNdays(self.__indexdata, value), name='UpinlastNdays' + str(value))
+            s5 = pd.Series(self.InDayShakeinlastNdays(self.__indexdata, value),
+                           name='InDayShakeinlastNdays' + str(value))
+            s6 = pd.Series(self.VolumnsuminlastNdays(self.__indexdata, value), name='VolumnsuminlastNdays' + str(value))
+            s7 = pd.Series(self.IndexSTDinlastNdays(self.__indexdata, value), name='IndexSTDinlastNdays' + str(value))
+            s8 = pd.Series(self.IndexPercentageSTDinlastNdays(self.__indexdata, value),
+                           name='IndexPercentageSTDinlastNdays' + str(value))
+            # s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value),name = 'MaxContinuousUpDownInLastNdays' + str(value))
+            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8], axis=1)
+            indexDataFrame = pd.concat([indexDataFrame, df], axis=1)
         return indexDataFrame
 
 
-alist = [30,60]
+alist = [30, 60]
 Myclass = IndexMainframe('000001', 365, 30, 90, 0.2)
-#tmp = dp.init_index('000001')
+# tmp = dp.init_index('000001')
 test = Myclass.data_assemble(alist)
