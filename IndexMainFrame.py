@@ -51,16 +51,16 @@ class IndexMainframe(object):
 
     def GoodOrBad(self, inframe, up):
         #define good or bad
-        Series = pd.Series(index=inframe.iloc[N:-self.__performwindow].index,name='KGB')
+        Series = pd.Series(index=inframe.iloc[0:-self.__performwindow].index,name='KGB')
         idx = Series.index
         for value in idx:
             _pointer = inframe.index.get_loc(value.strftime('%Y-%m-%d'))
             _endtime = _pointer + self.__performwindow
-            if (inframe.iloc[_pointer:_endtime].close.max() - inframe.iloc[_pointer].close) / frame.iloc[0].close > up and inframe.iloc[_pointer:_endtime].close.min() > inframe.iloc[_pointer].close:
-            Series[value] = int(1)
-            return int(1)
-        else:
-            return int(0)
+            if (inframe.iloc[_pointer:_endtime].close.max() - inframe.iloc[_pointer].close) / inframe.iloc[_pointer].close > up and inframe.iloc[_pointer:_endtime].close.min() < inframe.iloc[_pointer].close:
+                Series[value] = int(1)
+            else:
+                Series[value] = int(0)
+        return Series
 
     def LowOpeninlastNdays(self, inframe, N):
         # Higher or Lower open is last N days
@@ -211,6 +211,7 @@ class IndexMainframe(object):
         # assemble all the data
         indexDataFrame = pd.DataFrame(index=self.__indexdata.index)
         for value in datelist:
+            s0 = pd.Series(self.GoodOrBad(self.__indexdata, self.__uppercent), name='KGB')
             s1 = pd.Series(self.PriceChangesinlastNdays(self.__indexdata, value),
                            name='PriceChangesinlastNdays' + str(value))
             s2 = pd.Series(self.PriceShakeinlastNdays(self.__indexdata, value),
@@ -224,12 +225,13 @@ class IndexMainframe(object):
             s8 = pd.Series(self.IndexPercentageSTDinlastNdays(self.__indexdata, value),
                            name='IndexPercentageSTDinlastNdays' + str(value))
             s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value))
-            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
+            df = pd.concat([s0,s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             indexDataFrame = pd.concat([indexDataFrame, df], axis=1)
         return indexDataFrame
 
 
-alist = [30, 60]
+alist = [5, 10, 30, 60, 90]
 Myclass = IndexMainframe('000001', 365, 30, 90, 0.2)
 # tmp = dp.init_index('000001')
 test = Myclass.data_assemble(alist)
+#test = Myclass.GoodOrBad(indexdf,0.1)
