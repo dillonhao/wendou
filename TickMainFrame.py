@@ -5,7 +5,7 @@ import datetime
 
 
 class TickMainframe(object):
-    def __init__(self, index, timewindow, performwindow, obervationwindow, uppercent):
+    def __init__(self, tick, timewindow, performwindow, obervationwindow, uppercent):
         #self.__instrument = instrument  # Name of the stock
         self.__timewindow = timewindow  # int windows for data analysis
         self.__performwindow = int(performwindow)  # int windows for data analysis
@@ -14,7 +14,7 @@ class TickMainframe(object):
         self.__starttime = (datetime.datetime.now() - datetime.timedelta(days=self.__timewindow)).strftime('%Y-%m-%d')
         # __starttime is max time of entry point
         self.__endtime = datetime.datetime.now().strftime('%Y-%m-%d')
-        TickData = ts.get_k_data(index, start=self.__starttime, end=self.__endtime)
+        TickData = ts.get_k_data(tick, start=self.__starttime, end=self.__endtime)
         TickData.set_index('date', inplace=True)
         TickData.index = pd.DatetimeIndex(TickData.index)
         self.__Tickdata = TickData
@@ -137,16 +137,16 @@ class TickMainframe(object):
     def MaxContinuousUpDownInLastNdays(self, inframe, N):
         # Not designed to work alone, will call MaxLenofUpDownsinlastNdays to get the data.
         df = pd.DataFrame(index=inframe.iloc[N:-self.__performwindow].index,
-                          columns=['UpDur', 'DownDur', 'UpPrice', 'DownPrice'])
+                          columns=['TickUpDur', 'TickDownDur', 'TickUpPrice', 'TickDownPrice'])
         idx = df.index
         for value in idx:
             _pointer = inframe.index.get_loc(value.strftime('%Y-%m-%d'))
             _starttime = _pointer - N
             UpDownPrice = self.MaxLenofUpDownsinlastNdays(inframe, _starttime, _pointer)
-            df.loc[value].UpDur = UpDownPrice.loc[True, 'Duration']
-            df.loc[value].DownDur = UpDownPrice.loc[False, 'Duration']
-            df.loc[value].UpPrice = UpDownPrice.loc[True, 'PriceChange']
-            df.loc[value].DownPrice = UpDownPrice.loc[False, 'PriceChange']
+            df.loc[value].TickUpDur = UpDownPrice.loc[True, 'Duration']
+            df.loc[value].TickDownDur = UpDownPrice.loc[False, 'Duration']
+            df.loc[value].TickUpPrice = UpDownPrice.loc[True, 'PriceChange']
+            df.loc[value].TickDownPrice = UpDownPrice.loc[False, 'PriceChange']
         return df
 
     def MaxLenofUpDownsinlastNdays(self, inframe, _start, _End):
@@ -209,18 +209,18 @@ class TickMainframe(object):
 
     def data_assemble(self, datelist):
         # assemble all the data
-        TickDataFrame = pd.DataFrame(index=self.__indexdata.index)
+        TickDataFrame = pd.DataFrame(index=self.__Tickdata.index)
         for value in datelist:
-            s0 = pd.Series(self.GoodOrBad(self.__Tickdata, self.__uppercent), name='KGB')
+            s0 = pd.Series(self.GoodOrBad(self.__Tickdata, self.__uppercent), name='Tick_KGB')
             s1 = pd.Series(self.PriceChangesinlastNdays(self.__Tickdata, value),
-                           name='PriceChangesinlastNdays' + str(value))
+                           name='TickPriceChangesinlastNdays' + str(value))
             s2 = pd.Series(self.PriceShakeinlastNdays(self.__Tickdata, value),
-                           name='PriceShakeinlastNdays' + str(value))
-            s3 = pd.Series(self.LowOpeninlastNdays(self.__Tickdata, value), name='LowOpeninlastNdays' + str(value))
-            s4 = pd.Series(self.UpinlastNdays(self.__Tickdata, value), name='UpinlastNdays' + str(value))
+                           name='TickPriceShakeinlastNdays' + str(value))
+            s3 = pd.Series(self.LowOpeninlastNdays(self.__Tickdata, value), name='TickLowOpeninlastNdays' + str(value))
+            s4 = pd.Series(self.UpinlastNdays(self.__Tickdata, value), name='TickUpinlastNdays' + str(value))
             s5 = pd.Series(self.InDayShakeinlastNdays(self.__Tickdata, value),
-                           name='InDayShakeinlastNdays' + str(value))
-            s6 = pd.Series(self.VolumnsuminlastNdays(self.__Tickdata, value), name='VolumnsuminlastNdays' + str(value))
+                           name='TickInDayShakeinlastNdays' + str(value))
+            s6 = pd.Series(self.VolumnsuminlastNdays(self.__Tickdata, value), name='TickVolumnsuminlastNdays' + str(value))
             s7 = pd.Series(self.TickSTDinlastNdays(self.__Tickdata, value), name='TickSTDinlastNdays' + str(value))
             s8 = pd.Series(self.TickPercentageSTDinlastNdays(self.__Tickdata, value),
                            name='TickPercentageSTDinlastNdays' + str(value))
@@ -232,7 +232,7 @@ class TickMainframe(object):
 
 
 alist = [5, 10, 30, 60, 90]
-Myclass = TickMainframe('000001', 365, 30, 90, 0.2)
+Myclass = TickMainframe('600000', 365, 30, 90, 0.2)
 # tmp = dp.init_Tick('000001')
 test = Myclass.data_assemble(alist)
 # test = Myclass.GoodOrBad(Tickdf,0.1)
