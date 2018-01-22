@@ -227,6 +227,7 @@ class IndexMainframe(object):
             s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value))
             df = pd.concat([s0,s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             indexDataFrame = pd.concat([indexDataFrame, df], axis=1)
+        print('haha, Im here')
         return indexDataFrame
 
 
@@ -234,4 +235,4 @@ alist = [5, 10, 30, 60, 90]
 Myclass = IndexMainframe('000001', 365, 30, 90, 0.2)
 # tmp = dp.init_index('000001')
 test = Myclass.data_assemble(alist)
-#test = Myclass.GoodOrBad(indexdf,0.1)
+# test = Myclass.GoodOrBad(indexdf,0.1)
