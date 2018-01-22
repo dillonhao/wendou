@@ -11,6 +11,7 @@ class MacroEconomics(object):
         self.__starttime = (datetime.datetime.now() - datetime.timedelta(days=self.__timewindow)).strftime('%Y-%m-%d')
         # __starttime is max time of entry point
         self.__endtime = datetime.datetime.now().strftime('%Y-%m-%d')
+        basics = ts.get_stock_basics()
         profit = ts.get_profit_data(2014, 3)
         report = ts.get_report_data(2014, 3)
         operation = ts.get_operation_data(2014, 3)
