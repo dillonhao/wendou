@@ -5,7 +5,7 @@ import datetime
 import talib as ta
 
 
-class TaMainframe(object):
+class TaMainFrame(object):
     def __init__(self, tick, timewindow, performwindow, obervationwindow, uppercent):
         #self.__instrument = instrument  # Name of the stock
         self.__timewindow = timewindow  # int windows for data analysis
@@ -19,6 +19,68 @@ class TaMainframe(object):
         TickData.set_index('date', inplace=True)
         TickData.index = pd.DatetimeIndex(TickData.index)
         self.__Tickdata = TickData
+
+    def ADX(self):
+        adx = ta.ADX(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values, timeperiod=14)
+        return pd.Series(adx, index=self.__Tickdata.index)
+
+    def ADXR(self):
+        adxr = ta.ADXR(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values, timeperiod=14)
+        return pd.Series(adxr, index=self.__Tickdata.index)
+
+    def AROON(self):
+        aroon = ta.AROON(self.__Tickdata['high'].values, self.__Tickdata['low'].values, timeperiod=14)
+        aroondf = {'aroonup': aroon[0], 'aroondown': aroon[1]}
+        return pd.DataFrame(aroondf,index=self.__Tickdata.index)
+
+    def AROONOSC(self):
+        arroonosc = ta.AROONOSC(self.__Tickdata['high'].values, self.__Tickdata['low'].values, timeperiod=14)
+        return pd.Series(arroonosc, index=self.__Tickdata.index)
+
+    def BOP(self):
+        bop = ta.BOP(self.__Tickdata['open'].values,self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values)
+        return pd.Series(bop, index=self.__Tickdata.index)
+
+    def CCI(self):
+        cci = ta.CCI(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values, timeperiod=14)
+        return pd.Series(cci, index=self.__Tickdata.index)
+
+    def CMO(self):
+        cmo = ta.CMO(self.__Tickdata['close'].values, timeperiod=14)
+        return pd.Series(cmo, index=self.__Tickdata.index)
+
+    def DX(self):
+        dx = ta.DX(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values, timeperiod=14)
+        return pd.Series(dx, index=self.__Tickdata.index)
+
+    def MACD(self):
+        #macd, macdsignal, macdhist = MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)
+        macd = ta.MACD(self.__Tickdata['close'].values,fastperiod=12, slowperiod=26, signalperiod=9)
+        macddf = {'macd':macd[0],'macdsignal':macd[1],'macdhist':macd[2]}
+        return pd.DataFrame(macddf,index=self.__Tickdata.index)
+
+    def MACDEXT(self):
+        # macd, macdsignal, macdhist = MACDEXT(close, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+        macdext = ta.MACDEXT(self.__Tickdata['close'].values,fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+        macdextdf = {'macdext':macdext[0],'macdsignalext':macdext[1],'macdhistext':macdext[2]}
+        return pd.DataFrame(macdextdf,index=self.__Tickdata.index)
+
+    def MFI(self):
+        # real = MFI(high, low, close, volume, timeperiod=14)
+        mfi = ta.MFI(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,self.__Tickdata['volume'].values,timeperiod=14)
+        return pd.Series(mfi,index=self.__Tickdata.index)
+
+    def MINUS_DI(self):
+        # real = MINUS_DI(high, low, close, timeperiod=14)
+        minus_di = ta.MINUS_DI(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,timeperiod=14)
+        return pd.Series(minus_di,index=self.__Tickdata.index)
+
+    def MINUS_DM(self):
+        # real = MINUS_DM(high, low, timeperiod=14)
+        minus_dm = ta.MINUS_DM(self.__Tickdata['high'].values, self.__Tickdata['low'].values,timeperiod=14)
+        return pd.Series(minus_dm,index=self.__Tickdata.index)
+
+
 
     def data_assemble(self, datelist):
         # assemble all the data
@@ -40,12 +102,11 @@ class TaMainframe(object):
             s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__Tickdata, value))
             df = pd.concat([s0,s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             TickDataFrame = pd.concat([TickDataFrame, df], axis=1)
-        print('haha, Im here')
         return TickDataFrame
 
 
 alist = [5, 10, 30, 60, 90]
-Myclass = TickMainframe('600000', 365, 30, 90, 0.2)
+Myclass = TaMainFrame('600519', 365, 30, 90, 0.2)
 # tmp = dp.init_Tick('000001')
-test = Myclass.data_assemble(alist)
+test = Myclass.MFI()
 # test = Myclass.GoodOrBad(Tickdf,0.1)
