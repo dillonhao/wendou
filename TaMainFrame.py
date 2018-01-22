@@ -80,6 +80,80 @@ class TaMainFrame(object):
         minus_dm = ta.MINUS_DM(self.__Tickdata['high'].values, self.__Tickdata['low'].values,timeperiod=14)
         return pd.Series(minus_dm,index=self.__Tickdata.index)
 
+    def MOM(self):
+        # real = MOM(close, timeperiod=10)
+        mom = ta.MOM(self.__Tickdata['close'].values,timeperiod=10)
+        return pd.Series(mom,index=self.__Tickdata.index)
+
+    def PLUS_DI(self):
+        # real = PLUS_DI(high, low, close, timeperiod=14)
+        plus_di = ta.PLUS_DI(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,timeperiod=14)
+        return pd.Series(plus_di, index=self.__Tickdata.index)
+
+    def PLUS_DM(self):
+        # real = PLUS_DM(high, low, timeperiod=14)
+        plus_dm = ta.PLUS_DM(self.__Tickdata['high'].values, self.__Tickdata['low'].values,timeperiod=14 )
+        return pd.Series(plus_dm, index=self.__Tickdata.index)
+
+
+    def PPO(self):
+        # real = PPO(close, fastperiod=12, slowperiod=26, matype=0)
+        ppo = ta.PPO(self.__Tickdata['close'].values,fastperiod=12, slowperiod=26, matype=0)
+        return pd.Series(ppo, index=self.__Tickdata.index)
+
+    def ROC(self):
+        # real = ROC(close, timeperiod=10)
+        roc = ta.ROC(self.__Tickdata['close'].values,timeperiod=10)
+        return pd.Series(roc, index=self.__Tickdata.index)
+
+    def ROCP(self):
+        # real = ROCP(close, timeperiod=10)
+        rocp = ta.ROCP(self.__Tickdata['close'].values,timeperiod=10)
+        return pd.Series(rocp, index=self.__Tickdata.index)
+
+    def ROCR(self):
+        # real = ROCR(close, timeperiod=10)
+        rocr = ta.ROCR(self.__Tickdata['close'].values,timeperiod=10)
+        return pd.Series(rocr, index=self.__Tickdata.index)
+
+    def RSI(self):
+        # real = RSI(close, timeperiod=14)
+        rsi = ta.RSI(self.__Tickdata['close'].values,timeperiod=14)
+        return pd.Series(rsi, index=self.__Tickdata.index)
+
+    def STOCH(self):
+        # slowk, slowd = STOCH(high, low, close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+        stoch = ta.STOCH(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+        stochdf = {'slowk':stoch[0],'slowd':stoch[1]}
+        return pd.DataFrame(stochdf, index=self.__Tickdata.index)
+
+    def STOCHF(self):
+        # fastk, fastd = STOCHF(high, low, close, fastk_period=5, fastd_period=3, fastd_matype=0)
+        stochf = ta.STOCHF(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,fastk_period=5, fastd_period=3, fastd_matype=0)
+        stochfdf = {'fastk':stochf[0],'fastd':stochf[1]}
+        return pd.DataFrame(stochfdf, index=self.__Tickdata.index)
+
+    def STOCHRSI(self):
+        # fastk, fastd = STOCHRSI(close, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+        stochrsi = ta.STOCHRSI(self.__Tickdata['close'].values,timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+        stochrsidf = {'fastkrsi':stochrsi[0],'fastdrsi':stochrsi[1]}
+        return pd.DataFrame(stochrsidf, index=self.__Tickdata.index)
+
+    def TRIX(self):
+        # real = TRIX(close, timeperiod=30)
+        trix = ta.TRIX(self.__Tickdata['close'].values,timeperiod=30)
+        return pd.Series(trix, index=self.__Tickdata.index)
+
+
+    def ULTOSC(self):
+        # real = ULTOSC(high, low, close, timeperiod1=7, timeperiod2=14, timeperiod3=28)
+        ultosc = ta.ULTOSC(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,timeperiod1=7, timeperiod2=14, timeperiod3=28)
+        return pd.Series(ultosc, index=self.__Tickdata.index)
+
+    def WILLR(self):
+        # real = WILLR(high, low, close, timeperiod=14)
+        willr = ta.WILLR(self.__Tickdata['high'].values, self.__Tickdata['low'].values, self.__Tickdata['close'].values,timeperiod=14)
+        return pd.Series(willr, index=self.__Tickdata.index)
 
 
     def data_assemble(self, datelist):
@@ -108,5 +182,5 @@ class TaMainFrame(object):
 alist = [5, 10, 30, 60, 90]
 Myclass = TaMainFrame('600519', 365, 30, 90, 0.2)
 # tmp = dp.init_Tick('000001')
-test = Myclass.MFI()
+test4 = Myclass.STOCHF()
 # test = Myclass.GoodOrBad(Tickdf,0.1)
