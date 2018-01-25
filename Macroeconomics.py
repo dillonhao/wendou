@@ -12,9 +12,14 @@ class MacroEconomics(object):
         # __starttime is max time of entry point
         self.__endtime = datetime.datetime.now().strftime('%Y-%m-%d')
         basics = ts.get_stock_basics()
-        profit = ts.get_profit_data(2014, 3)
+        profit = ts.get_profit_data(2014, 3) #code is not the index
         report = ts.get_report_data(2014, 3)
         operation = ts.get_operation_data(2014, 3)
         growth = ts.get_growth_data(2014, 3)
         debtpay = ts.get_debtpaying_data(2014, 3)
         cashflow = ts.get_cashflow_data(2014, 3)
+        # country wise
+
+        rrr = ts.get_rrr()
+        money_supply = ts.get_money_supply()
+        cpi = ts.get_cpi()

@@ -4,7 +4,7 @@ import numpy as np
 import datetime
 
 
-class IndexMainframe(object):
+class IndexMainFrame(object):
     def __init__(self, index, timewindow, performwindow, obervationwindow, uppercent):
         #self.__instrument = instrument  # Name of the stock
         self.__timewindow = timewindow  # int windows for data analysis
@@ -211,7 +211,7 @@ class IndexMainframe(object):
         # assemble all the data
         indexDataFrame = pd.DataFrame(index=self.__indexdata.index)
         for value in datelist:
-            s0 = pd.Series(self.GoodOrBad(self.__indexdata, self.__uppercent), name='KGB')
+            # s0 = pd.Series(self.GoodOrBad(self.__indexdata, self.__uppercent), name='KGB')
             s1 = pd.Series(self.PriceChangesinlastNdays(self.__indexdata, value),
                            name='PriceChangesinlastNdays' + str(value))
             s2 = pd.Series(self.PriceShakeinlastNdays(self.__indexdata, value),
@@ -225,14 +225,15 @@ class IndexMainframe(object):
             s8 = pd.Series(self.IndexPercentageSTDinlastNdays(self.__indexdata, value),
                            name='IndexPercentageSTDinlastNdays' + str(value))
             s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__indexdata, value))
-            df = pd.concat([s0,s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
+            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             indexDataFrame = pd.concat([indexDataFrame, df], axis=1)
         print('haha, Im here')
         return indexDataFrame
 
-
+'''
 alist = [5, 10, 30, 60, 90]
 Myclass = IndexMainframe('000001', 365, 30, 90, 0.2)
 # tmp = dp.init_index('000001')
 test = Myclass.data_assemble(alist)
 # test = Myclass.GoodOrBad(indexdf,0.1)
+'''

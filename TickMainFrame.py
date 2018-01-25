@@ -4,7 +4,7 @@ import numpy as np
 import datetime
 
 
-class TickMainframe(object):
+class TickMainFrame(object):
     def __init__(self, tick, timewindow, performwindow, obervationwindow, uppercent):
         #self.__instrument = instrument  # Name of the stock
         self.__timewindow = timewindow  # int windows for data analysis
@@ -230,9 +230,10 @@ class TickMainframe(object):
         print('haha, Im here')
         return TickDataFrame
 
-
+'''
 alist = [5, 10, 30, 60, 90]
-Myclass = TickMainframe('600000', 365, 30, 90, 0.2)
+Myclass = TickMainframe('600519', 730, 30, 90, 0.1)
 # tmp = dp.init_Tick('000001')
 test = Myclass.data_assemble(alist)
 # test = Myclass.GoodOrBad(Tickdf,0.1)
+'''
