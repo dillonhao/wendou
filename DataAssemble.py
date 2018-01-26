@@ -15,8 +15,8 @@ for value in ticklist:
     TickFrame = TickMainFrame(value, 730, 30, 90, 0.2)
     D1 = TaFrame.Pattern_Recognition_Functions()
     D3 = TickFrame.data_assemble(alist)
+    print(value)
     if i==0:
-        print('im zero')
         df = pd.concat([D1,D3],axis=1)
         out = df
     else:
@@ -24,4 +24,4 @@ for value in ticklist:
         out = pd.concat([out,df])
     i = i+1
 
-out.to_csv('out.csv')
+out.to_csv(time.strftime('%Y-%m-%d',time.localtime(time.time()))+'Assemble.csv')
