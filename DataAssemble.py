@@ -2,6 +2,7 @@ from TaMainFrame import TaMainFrame
 from IndexMainFrame import IndexMainFrame
 from TickMainFrame import TickMainFrame
 import pandas as pd
+import time
 
 #IndexFrame = IndexMainFrame('000001', 730, 30, 90, 0.1)
 #D2 = IndexFrame.data_assemble(alist)
