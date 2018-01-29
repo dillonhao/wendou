@@ -38,14 +38,15 @@ class TickMainFrame(object):
         for value in idx:
             _pointer = inframe.index.get_loc(value.strftime('%Y-%m-%d'))
             _starttime = _pointer - N
-            if inframe[inframe.close == inframe['close'].max()].index > inframe[
-                inframe.close == inframe['close'].min()].index:
+            #if inframe[inframe.close == inframe['close'].max()].index > inframe[
+                #inframe.close == inframe['close'].min()].index:
+            if inframe.iloc[_starttime:_pointer].close.idxmax() > inframe.iloc[_starttime:_pointer].close.idxmin():
                 Series[value] = (inframe.iloc[_starttime:_pointer].close.max() - inframe.iloc[
                                                                                  _starttime:_pointer].close.min()) / inframe.iloc[
                                                                                                                      _starttime:_pointer].close.min()
             else:
-                Series[value] = (inframe.iloc[_starttime:_pointer].close.max() - inframe.iloc[
-                                                                                 _starttime:_pointer].close.min()) / inframe.iloc[
+                Series[value] = (inframe.iloc[_starttime:_pointer].close.min() - inframe.iloc[
+                                                                                 _starttime:_pointer].close.max()) / inframe.iloc[
                                                                                                                      _starttime:_pointer].close.max()
         return Series
 
@@ -210,8 +211,9 @@ class TickMainFrame(object):
     def data_assemble(self, datelist):
         # assemble all the data
         TickDataFrame = pd.DataFrame(index=self.__Tickdata.index)
+        s0 = pd.Series(self.GoodOrBad(self.__Tickdata, self.__uppercent), name='Tick_KGB')
         for value in datelist:
-            s0 = pd.Series(self.GoodOrBad(self.__Tickdata, self.__uppercent), name='Tick_KGB')
+            # s0 = pd.Series(self.GoodOrBad(self.__Tickdata, self.__uppercent), name='Tick_KGB')
             s1 = pd.Series(self.PriceChangesinlastNdays(self.__Tickdata, value),
                            name='TickPriceChangesinlastNdays' + str(value))
             s2 = pd.Series(self.PriceShakeinlastNdays(self.__Tickdata, value),
@@ -225,8 +227,9 @@ class TickMainFrame(object):
             s8 = pd.Series(self.TickPercentageSTDinlastNdays(self.__Tickdata, value),
                            name='TickPercentageSTDinlastNdays' + str(value))
             s9 = pd.DataFrame(self.MaxContinuousUpDownInLastNdays(self.__Tickdata, value))
-            df = pd.concat([s0,s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
+            df = pd.concat([s1, s2, s3, s4, s5, s6, s7, s8,s9], axis=1)
             TickDataFrame = pd.concat([TickDataFrame, df], axis=1)
+        TickDataFrame = pd.concat([TickDataFrame, s0], axis=1)
         print('haha, Im here')
         return TickDataFrame
 
