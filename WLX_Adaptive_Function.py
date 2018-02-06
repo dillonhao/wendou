@@ -1,7 +1,20 @@
 import pandas as pd
 import numpy as np
 from math import log
+import tushare as ts
+import datetime
 
+#define global param
+Instrument = '600848'   #define the target instrument
+Timeana = 365          #define the length of the time
+endtime = datetime.datetime.now().strftime('%Y-%m-%d')
+starttime = (datetime.datetime.now() - datetime.timedelta(days = Timeana)).strftime('%Y-%m-%d')
+
+index = '000001'
+indexdf = ts.get_k_data('600519',start = starttime,end = endtime)
+ #get_k_data is a new interface be careful
+indexdf.set_index('date',inplace=True)
+indexdf.index = pd.DatetimeIndex(indexdf.index)
 
 def AvgReturn(tick, n, m):
     # defind the x = ln(x1/x2) which is the return of price. return the series data.
@@ -68,3 +81,39 @@ def ed67(AvgReturn,c):
             else:
                 ed7.iloc[i] = (0.1 * y4 + 0.2 * y5 + 0.4 * y6) / yb
     return pd.concat([ed6, ed7],axis=1)
+
+
+n = 1
+m = 5
+C = 0.01
+lmd = 0.95
+timeframe = 600
+p = np.matrix('10 0;0 10')
+#aa = pd.DataFrame(index=tick.index)
+
+
+def rls(tick):
+    # tick is a time series. close is prefer
+    MaReturn = AvgReturn(tick, 1, 5)
+    ed = ed67(MaReturn, 0.01)
+    p = np.matrix('10 0;0 10')
+    aa = pd.DataFrame(np.zeros([tick.size + 1, 2]), columns=[1, 2])
+    for i, value in enumerate(tick):
+        if i < 4:
+            continue
+        x = np.matrix(ed.iloc[i, :]).T
+        aai = np.matrix(aa.iloc[i, :]).T
+        K = p * x / (x.T * p * x - 0.95)
+        r = log(tick.iloc[i] / tick.iloc[i - 1])
+        aa.iloc[i + 1] = (aai + K * (r - x.T * aai)).T
+        p = (p - K * x.T * p) / 0.95
+        # P=(P-K*x'*P)/lmd
+        # print "/n", x
+        # print "/n", aai
+        # print "/n", K,
+        # print "/n", r,
+        # print "/n", p
+    return aa
+
+out = rls(indexdf.close)
+
