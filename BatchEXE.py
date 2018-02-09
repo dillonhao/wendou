@@ -1,25 +1,26 @@
 import concurrent.futures
 import multiprocessing
 from rqalpha import run
-
+import csv
 tasks = []
-for short_period in range(3, 10, 3):
-    for long_period in range(30, 90, 10):
-        config = {
+csvfile = open('E:/wendou/tick.csv','r')
+tick = csv.reader(csvfile)
+
+for inst in tick:
+    config = {
             "extra": {
                 "context_vars": {
-                    "SHORTPERIOD": short_period,
-                    "LONGPERIOD": long_period,
+                    "s1": inst[0],
                 },
-                "log_level": "error",
+                "log_level": "verbose",
             },
             "base": {
                 "matching_type": "current_bar",
-                "start_date": "2015-01-01",
-                "end_date": "2016-01-01",
+                "start_date": "2017-01-01",
+                "end_date": "2018-02-06",
                 "benchmark": "000001.XSHE",
                 "frequency": "1d",
-                "strategy_file": "C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/examples/golden_cross.py",
+                "strategy_file": "C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/examples/FBB.py",
         "accounts": {
             "stock": 100000
         }
@@ -31,27 +32,21 @@ for short_period in range(3, 10, 3):
                 },
                 "sys_analyser": {
                     "enabled": True,
-                    "output_file": "E:/tmp/result/out-{short_period}-{long_period}.pkl".format(
-                        short_period=short_period,
-                        long_period=long_period,
-                    )
+                    "output_file": "E:/tmp/result/FBB-out-{tick}.pkl".format(tick=inst[0])
                 },
             },
         }
 
-        tasks.append(config)
+    tasks.append(config)
 
 for task in tasks:
     run(task)
 
 def run_bt(config):
     run(config)
-
-with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-    for task in tasks:
-        executor.submit(run_bt, task)
-
-
+csvfile.close
+###################################
+# below is the result analyze code
 import glob
 import pandas as pd
 

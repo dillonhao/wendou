@@ -12,7 +12,10 @@ p = np.matrix('10 0;0 10')
 aa = pd.DataFrame(index=tick.index)
 
 
-def rls(tick, ed):
+def rls(tick):
+    # tick is a time series. close is prefer
+    MaReturn = AvgReturn(tick, 1, 5)
+    ed = ed67(MaReturn, 0.01)
     p = np.matrix('10 0;0 10')
     aa = pd.DataFrame(np.zeros([tick.size + 1, 2]), columns=[1, 2])
     for i, value in enumerate(tick):
@@ -31,3 +34,5 @@ def rls(tick, ed):
         # print "/n", r,
         # print "/n", p
     return aa
+
+rls(indexdf.close,ed)
